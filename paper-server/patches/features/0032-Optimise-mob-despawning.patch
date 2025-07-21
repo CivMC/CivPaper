@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: okx-code <okx@okx.sh>
+Date: Mon, 21 Jul 2025 22:41:36 +0100
+Subject: [PATCH] Optimise mob despawning
+
+
+diff --git a/net/minecraft/server/level/ServerLevel.java b/net/minecraft/server/level/ServerLevel.java
+index 0651a536ad38c3c6d1ac2423b6d351738719339f..7ae929d9d3e494189f89c13c0795df07db64ab98 100644
+--- a/net/minecraft/server/level/ServerLevel.java
++++ b/net/minecraft/server/level/ServerLevel.java
+@@ -795,6 +795,7 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
+             }
+ 
+             io.papermc.paper.entity.activation.ActivationRange.activateEntities(this); // Paper - EAR
++            generateEligiblePlayersForDespawning();
+             this.entityTickList
+                 .forEach(
+                     entity -> {
+@@ -2748,4 +2749,24 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
+         this.lagCompensationTick = (System.nanoTime() - MinecraftServer.SERVER_INIT) / (java.util.concurrent.TimeUnit.MILLISECONDS.toNanos(50L));
+     }
+     // Paper end - lag compensation
++
++    // Paper start - optimise despawns
++    @Nullable
++    private io.papermc.paper.util.kdtree.Kd3Tree despawnEligiblePlayers;
++
++    private void generateEligiblePlayersForDespawning() {
++        List<Vec3> nodes = new ArrayList<>();
++        for (ServerPlayer player : players) {
++            if (net.minecraft.world.entity.EntitySelector.PLAYER_AFFECTS_SPAWNING.test(player)) {
++                nodes.add(player.position());
++            }
++        }
++        this.despawnEligiblePlayers = new io.papermc.paper.util.kdtree.Kd3Tree(nodes.toArray(new Vec3[0]));
++    }
++
++    @Nullable
++    public io.papermc.paper.util.kdtree.Kd3Tree getDespawnEligiblePlayers() {
++        return despawnEligiblePlayers;
++    }
++    // Paper end - optimise despawns
+ }
