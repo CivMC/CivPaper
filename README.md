@@ -1,6 +1,6 @@
 # CivPaper
 
-CivPaper is a fork of 1.21.4 Paper with optimisations intended for survival-like servers with many entities and players, distributed widely.
+CivPaper is a fork of 1.21.4 Paper with optimisations intended for survival-like servers with many entities and players, distributed across a large area.
 
 It is a high priority that gameplay is not affected in any way, and this is intended as a kind of "staging ground" for merging into mainline Paper.
 
