@@ -5,7 +5,7 @@ Subject: [PATCH] Optimise mob despawning
 
 
 diff --git a/net/minecraft/server/level/ServerLevel.java b/net/minecraft/server/level/ServerLevel.java
-index dda8d38ef61672cc714d9e5a475f9b0412ed5ff9..2c21fc430de7cec90ee83a508b45e56e6fdb4545 100644
+index 5c62933c0e4f4e02d73ce1575c3f601ba00b9007..470167a4cd1ef943cb219c06defac524844fa634 100644
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
 @@ -789,6 +789,7 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
@@ -13,14 +13,13 @@ index dda8d38ef61672cc714d9e5a475f9b0412ed5ff9..2c21fc430de7cec90ee83a508b45e56e
  
              io.papermc.paper.entity.activation.ActivationRange.activateEntities(this); // Paper - EAR
 +            generateEligiblePlayersForDespawning();
+             this.globalTemptationLookup.reset(); // Paper - optimise temptation lookups - reset global cache prior to next entity tick
              this.entityTickList
                  .forEach(
-                     entity -> {
-@@ -2797,4 +2798,26 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
-         this.lagCompensationTick = (System.nanoTime() - MinecraftServer.SERVER_INIT) / (java.util.concurrent.TimeUnit.MILLISECONDS.toNanos(50L));
+@@ -2799,6 +2800,28 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
      }
      // Paper end - lag compensation
-+
+ 
 +    // Paper start - optimise despawns
 +    @Nullable
 +    private io.papermc.paper.util.kdtree.Kd3Tree despawnEligiblePlayers;
@@ -42,13 +41,16 @@ index dda8d38ef61672cc714d9e5a475f9b0412ed5ff9..2c21fc430de7cec90ee83a508b45e56e
 +        return despawnEligiblePlayers;
 +    }
 +    // Paper end - optimise despawns
- }
++
+     // Paper start - optimise temptation lookups
+     private final io.papermc.paper.entity.temptation.GlobalTemptationLookup globalTemptationLookup = new io.papermc.paper.entity.temptation.GlobalTemptationLookup(); // Paper - Optimise TemptGoal
+     public io.papermc.paper.entity.temptation.GlobalTemptationLookup getTemptGoalLookup() {
 diff --git a/net/minecraft/world/entity/Mob.java b/net/minecraft/world/entity/Mob.java
-index 0470c4bbf8be7e48ce8dfa4910c3b9f5ebb23360..415025f25d35f795bf0157fff7f5a20e25cbfd5d 100644
+index e0b3cb2b2694768803ed347a1026b881fd624951..74f33fcafc231f620b579e94dcace82dd109008c 100644
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -700,15 +700,16 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
-         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+@@ -713,15 +713,16 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+         if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldActuallyDespawnInPeaceful()) { //Paper - allow changing despawnInPeaceful
              this.discard(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
 -            Entity nearestPlayer = this.level().findNearbyPlayer(this, -1.0, EntitySelector.PLAYER_AFFECTS_SPAWNING); // Paper - Affects Spawning API

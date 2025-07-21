@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: okx-code <okx@okx.sh>
+Date: Sat, 9 Aug 2025 15:19:59 +0100
+Subject: [PATCH] Add random tick scale
+
+
+diff --git a/net/minecraft/server/level/ServerLevel.java b/net/minecraft/server/level/ServerLevel.java
+index 470167a4cd1ef943cb219c06defac524844fa634..3d580dff66c5f771fca5bb7fe5a0ef794a3bde2e 100644
+--- a/net/minecraft/server/level/ServerLevel.java
++++ b/net/minecraft/server/level/ServerLevel.java
+@@ -932,7 +932,10 @@ public class ServerLevel extends Level implements ServerEntityGetter, WorldGenLe
+ 
+         profilerFiller.popPush("tickBlocks");
+         if (randomTickSpeed > 0) {
+-            this.optimiseRandomTick(chunk, randomTickSpeed); // Paper - optimise random ticking
++            final int randomTickScale = Math.max(1, this.paperConfig().chunks.randomTickScale);
++            if (randomTickScale == 1 || simpleRandom.nextInt(randomTickScale) == 0) {
++                this.optimiseRandomTick(chunk, randomTickSpeed * randomTickScale); // Paper - optimise random ticking
++            }
+         }
+ 
+         profilerFiller.pop();

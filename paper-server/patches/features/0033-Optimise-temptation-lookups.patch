@@ -319,7 +319,7 @@ index dd8ea03ba823996a5c97562e357650ab34d0e32e..ddf3e1f22baba86aa0e073c3000d1663
          this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
          this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 diff --git a/net/minecraft/world/entity/animal/Bee.java b/net/minecraft/world/entity/animal/Bee.java
-index d40954f03c865bfbc5beb308bbcf7b7c9ac48eb9..2c710ea32c7d25d8d36cf65bd2aae42ca63b48e3 100644
+index 13f24836649790a34b988e2d63accb043e6ff080..d3898cc4958fb0fda6713731c10f40f5077c5d4a 100644
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
 @@ -191,7 +191,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
@@ -425,7 +425,7 @@ index 8738424b92726f45de2c166a063d46e1071e8b29..f30a07673cdd0e79532950cccc9b2bf4
          this.goalSelector.addGoal(4, new Turtle.TurtleGoHomeGoal(this, 1.0));
          this.goalSelector.addGoal(7, new Turtle.TurtleTravelGoal(this, 1.0));
 diff --git a/net/minecraft/world/entity/animal/horse/AbstractHorse.java b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-index 31ed5d7cfbda1a1f98ebfc89f5cbc65332cabdae..3e5ed602358613dd1bfd70b4cffa846ee17a4104 100644
+index e7e4558d0f018a0c975d12d77287cda4df5a500a..e19cd4c324f5c64cd90febd0f1a5d9f42da2373f 100644
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 @@ -148,7 +148,7 @@ public abstract class AbstractHorse extends Animal implements HasCustomInventory
